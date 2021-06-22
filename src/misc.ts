@@ -15,20 +15,25 @@ export const parse = (str: string) => {
 		const av = _.trim(cookie_av);
 		if (!av) continue;
 		const av_sep = av.indexOf("=");
-		const av_key = _.toLower(_.trim(av_sep === -1 ? av : av.substr(0, av_sep)));
+		const av_key = _.toLower(
+			_.trim(av_sep === -1 ? av : av.substr(0, av_sep))
+		);
 		const av_value = av_sep === -1 ? null : _.trim(av.substr(av_sep + 1));
 		switch (av_key) {
 			case "max-age":
 				if (av_value) {
-					console.log(av_value, /^-?[0-9]+$/.test(av_value));
 					if (/^-?[0-9]+$/.test(av_value)) {
-						console.log(av_value, parseInt(av_value, 10));
-						cookie.expires = dayjs().add(parseInt(av_value, 10), "s").unix();
+						cookie.expires = dayjs()
+							.add(parseInt(av_value, 10), "s")
+							.unix();
 					}
 				}
 				break;
 			case "expires":
-				if (!cookie.expires) cookie.expires = av_value ? dayjs(av_value).unix() || -1 : -1;
+				if (!cookie.expires)
+					cookie.expires = av_value
+						? dayjs(av_value).unix() || -1
+						: -1;
 				break;
 			case "domain":
 				if (av_value) {
@@ -84,7 +89,8 @@ export const getPublicSuffix = (domain: string) => {
 
 export const domainMatch = (hostDomain: string, cookieDomain: string) => {
 	if (hostDomain == null || cookieDomain == null) return null;
-	if (hostDomain === cookieDomain || `.${hostDomain}` === cookieDomain) return true;
+	if (hostDomain === cookieDomain || `.${hostDomain}` === cookieDomain)
+		return true;
 	const idx = hostDomain.indexOf(cookieDomain);
 	if (idx < 0) return false;
 	if (hostDomain.length !== cookieDomain.length + idx) return false;
@@ -114,7 +120,8 @@ export const parseCookiePair = (cookiePair: string) => {
 	if (firstEq <= 0) return;
 	const cookieName = cookiePair.substr(0, firstEq).trim();
 	const cookieValue = cookiePair.substr(firstEq + 1).trim();
-	if (CONTROL_CHARS.test(cookieName) || CONTROL_CHARS.test(cookieValue)) return;
+	if (CONTROL_CHARS.test(cookieName) || CONTROL_CHARS.test(cookieValue))
+		return;
 	const c = new Cookie();
 	c.name = cookieName;
 	c.value = cookieValue;
