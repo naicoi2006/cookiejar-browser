@@ -1,0 +1,35 @@
+{
+	"name": "cookiejar-browser",
+	"version": "1.2.3",
+	"types": "dist/index.d.js",
+	"main": "dist/index.js",
+	"repository": "https://github.com/naicoi2006/cookiejar-browser.git",
+	"author": "naicoi2006 <naicoi2006@gmail.com>",
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"prebuild": "yarn run clean",
+		"build": "yarn run build:cjs",
+		"build:cjs": "tsc",
+		"start": "tsc -w",
+		"clean": "del dist",
+		"prepublishOnly": "yarn run build",
+		"pretest": "yarn run build"
+	},
+	"dependencies": {
+		"dayjs": "^1.10.5",
+		"lodash": "^4.17.21",
+		"psl": "^1.8.0",
+		"punycode": "^2.1.1"
+	},
+	"devDependencies": {
+		"@types/lodash": "^4.14.170",
+		"@types/node": "^15.12.4",
+		"@types/psl": "^1.1.0",
+		"@types/punycode": "^2.1.0",
+		"del-cli": "^4.0.0",
+		"typescript": "^4.3.4"
+	}
+}
