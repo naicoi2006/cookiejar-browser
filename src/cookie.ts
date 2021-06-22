@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { CookieInterface } from "./var";
 
 class Cookie {
 	name: string;
@@ -14,9 +15,19 @@ class Cookie {
 		return `${this.name}=${this.value}`;
 	}
 	export() {
-		return _.toPlainObject(this);
+		const cookie: CookieInterface = {
+			name: this.name,
+			value: this.value,
+			domain: this.domain,
+			path: this.path,
+			expires: this.expires,
+			secure: this.secure,
+			httpOnly: this.httpOnly,
+			sameSite: this.sameSite,
+		};
+		return cookie;
 	}
-	static import(cookie: object) {
+	static import(cookie: CookieInterface) {
 		const ck = new Cookie();
 		ck.name = _.get(cookie, "name", "");
 		ck.value = _.get(cookie, "value", "");
