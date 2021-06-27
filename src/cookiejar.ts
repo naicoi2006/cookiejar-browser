@@ -19,23 +19,19 @@ class CookieJar {
 		this.rejectPublicSuffixes = !!options.rejectPublicSuffixes;
 		this.store = new CookieStore();
 	}
-	setCookie(
-		cookieString: string,
-		url: string,
-		callback: (error: Error | null, result: unknown) => void = console.log
-	) {
-		const context = getCookieContext(url);
-		const cookie: Cookie = parse(cookieString);
-		if (!cookie)
-			return callback(new Error("Cannot parse Set-Cookie string"), null);
+	async setCookie(cookieOrString: Cookie | string, currentUrl: string) {
+		const context = getCookieContext(currentUrl);
+		const cookie: Cookie = _.isString(cookieOrString)
+			? parse(cookieOrString)
+			: cookieOrString;
+		if (!cookie) throw new Error("Cannot parse Set-Cookie string");
 		if (this.rejectPublicSuffixes && cookie.domain) {
 			const suffix = getPublicSuffix(cookie.domain);
 			if (suffix == null) return;
 		}
 		if (!cookie.secure && _.startsWith(cookie.name, "__Secure-"))
-			return callback(
-				new Error("Cookie name starts with __Secure- must have Secure"),
-				null
+			throw new Error(
+				"Cookie name starts with __Secure- must have Secure"
 			);
 		if (!cookie.path || !_.startsWith(cookie.path, "/")) {
 			const pathname: string = _.get(context, "pathname", "/");
@@ -46,11 +42,8 @@ class CookieJar {
 			!(cookie.secure && !cookie.domain && cookie.path === "/") &&
 			_.startsWith(cookie.name, "__Host-")
 		)
-			return callback(
-				new Error(
-					"Cookie name starts with __Host- must have Secure or don't have Domain and Default Path"
-				),
-				null
+			throw new Error(
+				"Cookie name starts with __Host- must have Secure or don't have Domain and Default Path"
 			);
 		const hostname: string = _.get(context, "hostname", "");
 		if (cookie.domain) {
@@ -64,21 +57,17 @@ class CookieJar {
 					)
 						cookie.domain = `.${canonicalDomain(cookie.domain)}`;
 					else
-						callback(
-							new Error(
-								"Not match Domain with URL on Strict Mode"
-							),
-							null
+						throw new Error(
+							"Not match Domain with URL on Strict Mode"
 						);
 				}
 			}
 		} else {
-			if (!hostname)
-				callback(new Error("Not found Domain or hostname"), null);
+			if (!hostname) throw new Error("Not found Domain or hostname");
 			cookie.domain = hostname;
 		}
 		this.store.putCookie(cookie);
-		return callback(null, cookie);
+		return cookie;
 	}
 	getCookies(url: string) {
 		const context = getCookieContext(url);
@@ -91,18 +80,14 @@ class CookieJar {
 			(ck: Cookie) => -ck.path.length
 		);
 	}
-	getCookieString(
-		url: string,
-		callback: (
-			error: Error | null,
-			cookieHeader: string
-		) => void = console.log
-	) {
+	async getCookieString(currentUrl: string) {
 		const cookieString = _.join(
-			_.map(this.getCookies(url), (ck: Cookie) => ck.cookieString()),
+			_.map(this.getCookies(currentUrl), (ck: Cookie) =>
+				ck.cookieString()
+			),
 			"; "
 		);
-		return callback(null, cookieString);
+		return cookieString;
 	}
 	addCookie(cookie: Cookie) {
 		this.store.putCookie(cookie);
