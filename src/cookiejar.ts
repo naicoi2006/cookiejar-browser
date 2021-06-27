@@ -22,7 +22,7 @@ class CookieJar {
 	setCookie(
 		cookieString: string,
 		url: string,
-		callback: (error: Error | null, result: unknown) => void
+		callback: (error: Error | null, result: unknown) => void = console.log
 	) {
 		const context = getCookieContext(url);
 		const cookie: Cookie = parse(cookieString);
@@ -78,8 +78,7 @@ class CookieJar {
 			cookie.domain = hostname;
 		}
 		this.store.putCookie(cookie);
-		callback(null, cookie);
-		return cookie;
+		return callback(null, cookie);
 	}
 	getCookies(url: string) {
 		const context = getCookieContext(url);
@@ -94,14 +93,16 @@ class CookieJar {
 	}
 	getCookieString(
 		url: string,
-		callback: (error: Error | null, cookieHeader: string) => void
+		callback: (
+			error: Error | null,
+			cookieHeader: string
+		) => void = console.log
 	) {
 		const cookieString = _.join(
 			_.map(this.getCookies(url), (ck: Cookie) => ck.cookieString()),
 			"; "
 		);
-		callback(null, cookieString);
-		return cookieString;
+		return callback(null, cookieString);
 	}
 	addCookie(cookie: Cookie) {
 		this.store.putCookie(cookie);
