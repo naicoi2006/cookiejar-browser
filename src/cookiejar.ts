@@ -94,7 +94,7 @@ class CookieJar {
 	}
 	getCookieString(
 		url: string,
-		callback: (error: Error | null, result: unknown) => void
+		callback: (error: Error | null, cookieHeader: string) => void
 	) {
 		const cookieString = _.join(
 			_.map(this.getCookies(url), (ck: Cookie) => ck.cookieString()),
