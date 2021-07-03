@@ -19,7 +19,6 @@
 		"pretest": "yarn run build"
 	},
 	"dependencies": {
-		"@types/tough-cookie": "^4.0.0",
 		"dayjs": "^1.10.5",
 		"lodash": "^4.17.21",
 		"psl": "^1.8.0",
