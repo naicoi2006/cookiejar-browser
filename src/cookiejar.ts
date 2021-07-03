@@ -19,7 +19,7 @@ class CookieJar {
 		this.rejectPublicSuffixes = !!options.rejectPublicSuffixes;
 		this.store = new CookieStore();
 	}
-	async setCookie(cookieOrString: Cookie | string, currentUrl: string) {
+	setCookie(cookieOrString: Cookie | string, currentUrl: string) {
 		const context = getCookieContext(currentUrl);
 		const cookie: Cookie = _.isString(cookieOrString)
 			? parse(cookieOrString)
@@ -80,7 +80,7 @@ class CookieJar {
 			(ck: Cookie) => -ck.path.length
 		);
 	}
-	async getCookieString(currentUrl: string) {
+	getCookieString(currentUrl: string) {
 		const cookieString = _.join(
 			_.map(this.getCookies(currentUrl), (ck: Cookie) =>
 				ck.cookieString()
