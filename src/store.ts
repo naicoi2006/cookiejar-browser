@@ -10,14 +10,26 @@ class CookieStore {
 	}
 	findCookies(hostname: string, pathname: string, secure: boolean = true) {
 		if (!hostname) return [];
-		const domains = [..._.map(permuteDomain(hostname) || [hostname], (domain) => `.${domain}`), hostname];
+		const domains = [
+			..._.map(
+				permuteDomain(hostname) || [hostname],
+				(domain) => `.${domain}`
+			),
+			hostname,
+		];
 		return _.filter(this.cookies, (ck) => {
 			if (ck.secure && !secure) return false;
 			if (ck.expires >= 0 && ck.expires <= dayjs().unix()) {
 				this.removeCookie(ck);
 				return false;
 			}
-			return _.includes(domains, ck.domain) && pathMatch(pathname, ck.path);
+			if (_.trim(ck.value) === "") {
+				this.removeCookie(ck);
+				return false;
+			}
+			return (
+				_.includes(domains, ck.domain) && pathMatch(pathname, ck.path)
+			);
 		});
 	}
 	putCookie(cookie: Cookie) {
@@ -26,10 +38,17 @@ class CookieStore {
 		} else {
 			const cookieIndex = _.findIndex(
 				this.cookies,
-				(ck) => ck.domain === cookie.domain && ck.path === cookie.path && ck.name === cookie.name
+				(ck) =>
+					ck.domain === cookie.domain &&
+					ck.path === cookie.path &&
+					ck.name === cookie.name
 			);
 			if (cookieIndex >= 0) {
-				this.cookies = [...this.cookies.slice(0, cookieIndex), cookie, ...this.cookies.slice(cookieIndex + 1)];
+				this.cookies = [
+					...this.cookies.slice(0, cookieIndex),
+					cookie,
+					...this.cookies.slice(cookieIndex + 1),
+				];
 			} else {
 				this.cookies = [...this.cookies, cookie];
 			}
@@ -38,10 +57,16 @@ class CookieStore {
 	removeCookie(cookie: Cookie) {
 		const cookieIndex = _.findIndex(
 			this.cookies,
-			(ck) => ck.domain === cookie.domain && ck.path === cookie.path && ck.name === cookie.name
+			(ck) =>
+				ck.domain === cookie.domain &&
+				ck.path === cookie.path &&
+				ck.name === cookie.name
 		);
 		if (cookieIndex >= 0) {
-			this.cookies = [...this.cookies.slice(0, cookieIndex), ...this.cookies.slice(cookieIndex + 1)];
+			this.cookies = [
+				...this.cookies.slice(0, cookieIndex),
+				...this.cookies.slice(cookieIndex + 1),
+			];
 		}
 	}
 }
