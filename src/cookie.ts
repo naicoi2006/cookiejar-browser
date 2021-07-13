@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { CookieInterface } from "./var";
 
-class Cookie {
+class Cookie implements CookieInterface {
 	name: string;
 	value: string;
 	domain: string;
@@ -9,7 +9,7 @@ class Cookie {
 	expires: number;
 	secure: boolean = false;
 	httpOnly: boolean = false;
-	sameSite: "Strict" | "Lax" | "None" = "None";
+	sameSite: "Strict" | "Lax" | "None" = undefined;
 	cookieString() {
 		if (this.name === "") return this.value;
 		return `${this.name}=${this.value}`;
@@ -36,7 +36,7 @@ class Cookie {
 		ck.expires = _.get(cookie, "expires", -1);
 		ck.secure = _.get(cookie, "secure", false);
 		ck.httpOnly = _.get(cookie, "httpOnly", false);
-		ck.sameSite = _.get(cookie, "sameSite", "None");
+		ck.sameSite = _.get(cookie, "sameSite", undefined);
 		return ck;
 	}
 }

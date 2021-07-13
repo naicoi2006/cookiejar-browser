@@ -11,5 +11,5 @@ export interface CookieInterface {
 	expires: number;
 	secure: boolean;
 	httpOnly: boolean;
-	sameSite: "Strict" | "Lax" | "None";
+	sameSite: "Strict" | "Lax" | "None" | undefined;
 }
