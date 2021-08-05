@@ -122,7 +122,6 @@ export const parseCookiePair = (cookiePair: string) => {
 	const cookieValue = cookiePair.substr(firstEq + 1).trim();
 	if (CONTROL_CHARS.test(cookieName) || CONTROL_CHARS.test(cookieValue))
 		return;
-	if (!cookieName || !cookieValue) return;
 	const c = new Cookie();
 	c.name = cookieName;
 	c.value = cookieValue;
